@@ -6,8 +6,10 @@ import states.GameOverState;
 import flixel.util.FlxColor;
 import flixel.tile.FlxTilemap;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
-import character.Item;
+import character.Reach;
+import environment.Interactable;
 import character.Player;
+import environment.Gun;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxState;
 import flixel.FlxG;
@@ -16,7 +18,9 @@ import flixel.FlxObject;
 class PlayState extends FlxState
 {
 	private var player:Player;
-	private var reach:Item;
+	private var reach:Reach;
+	private var gun:Gun;
+	private var inter:Interactable;
 
 	private var map:FlxOgmo3Loader;
 	private var walls:FlxTilemap;
@@ -45,9 +49,16 @@ class PlayState extends FlxState
 
 		player = new Player();
 		add(player);
-		
-		reach = new Item(player);
+
+		gun = new Gun(100, 100);
+		add(gun);
+
+		reach = new Reach(player);
 		add(reach);
+
+		inter = new Interactable(gun, reach);
+		
+		
 		
 	}
 

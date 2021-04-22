@@ -8,7 +8,8 @@ import flixel.input.keyboard.FlxKey;
 import flixel.FlxG;
 import flixel.FlxSprite;
 
-class Player extends FlxSprite {
+class Player extends FlxSprite 
+{
 
     public static var WIDTH(default, never):Int = 16;
     public static var HEIGHT(default, never):Int = 16;
@@ -27,7 +28,7 @@ class Player extends FlxSprite {
     private static var ACTION_2:FlxKey = FlxKey.X;
 
     // Stats
-    private static var STARTING_MAX_HEALTH:Int = 10; //This is total number of fragments, not total hearts
+    private static var STARTING_MAX_HEALTH:Int = 6; //This is total number of fragments, not total hearts
 
     public function new(X:Float = 0, Y:Float = 0) {
         super(X, Y);
