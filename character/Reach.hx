@@ -3,7 +3,7 @@ package character;
 import flixel.FlxSprite;
 import flixel.FlxObject;
 
-class Item extends FlxSprite 
+class Reach extends FlxSprite 
 {
     private var owner:FlxSprite;
 

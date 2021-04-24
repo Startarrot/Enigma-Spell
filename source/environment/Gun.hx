@@ -18,5 +18,16 @@ class Gun extends FlxSprite
             isFound = false;
         }
 
+    override public function update(elapsed:Float):Void
+        {
+            
+        }
+
+    public function found()
+    {
+        isFound = true;
+        makeGraphic(10,10, FlxColor.CYAN);
+    }
+
     
 }

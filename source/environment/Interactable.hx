@@ -17,16 +17,16 @@ class Interactable extends FlxObject
             this.arm = arm;
         }
 
-    override public function update(elapsed:Float):Void
-        {
-            if(FlxG.keys.justPressed.Z)
-                {
-                    FlxG.overlap(ob1, arm, check);
-                }
-        }
+    // override public function update(elapsed:Float):Void
+    //     {
+    //         if(FlxG.keys.justPressed.Z)
+    //             {
+    //                 FlxG.overlap(ob1, arm, check);
+    //             }
+    //     }
 
-        public function check()
-            {
-                ob1.isFound = true;
-            }
+    //     public function check()
+    //         {
+    //             ob1.isFound = true;
+    //         }
 }

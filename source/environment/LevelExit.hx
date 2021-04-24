@@ -18,7 +18,7 @@ class LevelExit extends FlxSprite
     
         private function initializeGraphics():Void 
         {
-            loadGraphic(AssetPaths.exitTriforce__png);
+            //loadGraphic(AssetPaths.exitTriforce__png);
         }
     
         override function update(elapsed:Float) 

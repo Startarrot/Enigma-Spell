@@ -7,7 +7,7 @@ import flixel.util.FlxColor;
 import flixel.tile.FlxTilemap;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
 import character.Reach;
-import environment.Interactable;
+//import environment.Interactable;
 import character.Player;
 import environment.Gun;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -20,12 +20,12 @@ class PlayState extends FlxState
 	private var player:Player;
 	private var reach:Reach;
 	private var gun:Gun;
-	private var inter:Interactable;
+	//private var inter:Interactable;
 
 	private var map:FlxOgmo3Loader;
 	private var walls:FlxTilemap;
-	private var ending:Bool;
-	private var won:Bool;
+	// private var ending:Bool;
+	// private var won:Bool;
 
 	private var levelExit:LevelExit;
 
@@ -42,9 +42,9 @@ class PlayState extends FlxState
 		walls.setTileProperties(2, FlxObject.ANY);
 		add(walls);
 
-		//add levelExit
-		levelExit = new LevelExit(270, 430);
-		add(levelExit);
+		// //add levelExit
+		// // levelExit = new LevelExit(270, 430);
+		// add(levelExit);
 
 
 		player = new Player();
@@ -56,7 +56,7 @@ class PlayState extends FlxState
 		reach = new Reach(player);
 		add(reach);
 
-		inter = new Interactable(gun, reach);
+		//inter = new Interactable(gun, reach);
 		
 		
 		
@@ -67,29 +67,41 @@ class PlayState extends FlxState
 		
 		super.update(elapsed);
 
-		if (ending)
-			{
-				return;
-			}
+		// if (ending)
+		// 	{
+		// 		return;
+		// 	}
 
-		// if (FlxG.overlap(hero, levelExit))
+		// if (FlxG.overlap(player, levelExit))
 		// 	{
 		// 		ending = true;
 		// 		won = true;
 		// 		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, doneFadeOut);
 		// 	}
-		
-
+		if(FlxG.keys.justPressed.Z)
+		{
+			if(FlxG.overlap(reach, gun))
+			{
+				if(gun.isFound == false)
+					gun.found();
+			}
+		}
 		// FlxG.overlap(hero, doors, openDoor);
 		// FlxG.overlap(hero, keys, pickupKey);
 		// FlxG.collide(hero, walls);
 		// FlxG.collide(hero, doors);
 	}
 
-	private function doneFadeOut()
-	{
-		FlxG.switchState(new states.GameOverState());	
-	}
+	// private function doneFadeOut()
+	// {
+	// 	FlxG.switchState(new states.GameOverState());	
+	// }
+
+	// private function interact(gun:Gun)
+	// {
+	// 	if(gun.found == false)
+	// 		gun.isFound();
+	// }
 
 	// // Opens locked doors if you have a key
 	// private function openDoor(hero:Hero, door:Door)
