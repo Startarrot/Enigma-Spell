@@ -7,7 +7,7 @@ import flixel.util.FlxColor;
 import flixel.tile.FlxTilemap;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
 import character.Reach;
-//import environment.Interactable;
+import environment.Interactable;
 import character.Player;
 import environment.Gun;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -20,7 +20,8 @@ class PlayState extends FlxState
 	private var player:Player;
 	private var reach:Reach;
 	private var gun:Gun;
-	//private var inter:Interactable;
+
+	private var inters:Interactable;
 
 	private var map:FlxOgmo3Loader;
 	private var walls:FlxTilemap;
@@ -45,7 +46,7 @@ class PlayState extends FlxState
 		// //add levelExit
 		// // levelExit = new LevelExit(270, 430);
 		// add(levelExit);
-
+		inters = new Interactable();
 
 		player = new Player();
 		add(player);
