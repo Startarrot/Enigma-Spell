@@ -14,8 +14,7 @@ class Player extends FlxSprite {
     public static var HEIGHT(default, never):Int = 16;
 
     public static var BASE_MOVE_SPEED:Float = 200;
-    public var canMove:Bool;
-    var stop:FlxVector = FlxVector.weak(0, 0);
+    public var canMove:Bool = true;
 
     public var playerHealth(default, null):PlayerHealth;
 
@@ -36,7 +35,6 @@ class Player extends FlxSprite {
         playerHealth = new PlayerHealth(STARTING_MAX_HEALTH);
         health = STARTING_MAX_HEALTH;
         initializeGraphics();
-        canMove = true;
     }
 
     private function initializeGraphics():Void {
@@ -47,10 +45,9 @@ class Player extends FlxSprite {
         super.update(elapsed);
 
         var moveDirection:FlxVector = selectMoveDirection();
-        if(canMove == true)
+        while(canMove == true)
             standardMovement(moveDirection);
-        else
-            standardMovement(stop);
+
     }
 
     private function selectMoveDirection():FlxVector {
