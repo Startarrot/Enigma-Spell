@@ -76,14 +76,14 @@ class PlayState extends FlxState
 		if(talk)
 			{
 				if(FlxG.keys.justPressed.Z)
-					{
-						talk = false;
-						player.canMove = true;
-						text.destroy();
-						background.destroy();
-						background = new FlxSprite(0,400).makeGraphic(FlxG.width, 100, FlxColor.BLACK);
-						text = new FlxText(0, 400, FlxG.width, "This is a gun.  This is probably the murder weapon.  I should check the body", 20);
-					}
+				{
+					talk = false;
+					player.canMove = true;
+					text.destroy();
+					background.destroy();
+					background = new FlxSprite(0,400).makeGraphic(FlxG.width, 100, FlxColor.BLACK);
+					text = new FlxText(0, 400, FlxG.width, "This is a gun.  This is probably the murder weapon.  I should check the body", 20);
+				}
 			}
 
 		// if (FlxG.overlap(hero, levelExit))
