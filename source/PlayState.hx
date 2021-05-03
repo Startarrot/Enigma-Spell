@@ -2,14 +2,13 @@ package;
 
 
 import environment.LevelExit;
-import states.GameOverState;
 import flixel.util.FlxColor;
 import flixel.tile.FlxTilemap;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
 import character.Reach;
-import environment.Interactable;
 import character.Player;
 import environment.Gun;
+import environment.Interactable;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxState;
 import flixel.FlxG;
@@ -24,9 +23,9 @@ class PlayState extends FlxState
 	private var player:Player;
 	private var reach:Reach;
 	private var gun:Gun;
-	private var inters:Interactable;
 	private var map:FlxOgmo3Loader;
 	private var walls:FlxTilemap;
+	private var inter:FlxTypedGroup<Interactable>;
 	var text:FlxText;
 	var background:FlxSprite;
 
@@ -40,7 +39,7 @@ class PlayState extends FlxState
 
 		talk = false;
 
-		background = new FlxSprite(0,400).makeGraphic(FlxG.width, 100, FlxColor.BLACK);
+		
 
 		//add level
 		map = new FlxOgmo3Loader(AssetPaths.csc303_game_levels__ogmo, AssetPaths.level01__json);
@@ -50,73 +49,56 @@ class PlayState extends FlxState
 		walls.setTileProperties(2, FlxObject.ANY);
 		add(walls);
 
-		// //add levelExit
-		// // levelExit = new LevelExit(270, 430);
-		// add(levelExit);
-		inters = new Interactable();
-
 		player = new Player();
 		add(player);
 
-		gun = new Gun(100, 100);
-		add(gun);
+		inter = new FlxTypedGroup<Interactable>();
+		inter.add(new Interactable(100,100,"This is a gun.  This is probably the murder weapon.  I should check the body"));
+		
+		// gun = new Gun(100, 100);
+		// add(gun);
 
 		reach = new Reach(player);
 		add(reach);
 
-		//inter = new Interactable(gun, reach);
-		
-		
-		
-		text = new FlxText(0, 400, FlxG.width, "This is a gun.  This is probably the murder weapon.  I should check the body", 20);
+		background = new FlxSprite(0,400).makeGraphic(FlxG.width, 100, FlxColor.BLACK);
+		text = new FlxText(0, 400, FlxG.width, 20);
+		add(background);
+		add(text);
+		background.kill();
+		text.kill();
 	}
 
 	override public function update(elapsed:Float):Void
 	{
-		
 		super.update(elapsed);
-
-		// if (ending)
-		// 	{
-		// 		return;
-		// 	}
-
-		// if (FlxG.overlap(player, levelExit))
 		if(talk)
 			{
 				if(FlxG.keys.justPressed.Z)
 				{
+					disableText(text, player, background);
 					talk = false;
-					player.canMove = true;
-					text.destroy();
-					background.destroy();
-					background = new FlxSprite(0,400).makeGraphic(FlxG.width, 100, FlxColor.BLACK);
-					text = new FlxText(0, 400, FlxG.width, "This is a gun.  This is probably the murder weapon.  I should check the body", 20);
 				}
 			}
 
-		// if (FlxG.overlap(hero, levelExit))
-		// 	{
-		// 		ending = true;
-		// 		won = true;
-		// 		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, doneFadeOut);
-		// 	}
-		if(FlxG.keys.justPressed.Z)
-		{
-			if(FlxG.overlap(reach, gun))
-			{
-				if(gun.isFound == false)
-					talk = gunPickup(text, player, talk, background);
-			}
-		}
+			if(FlxG.keys.justPressed.Z && !talk)
+				{
+					if(FlxG.overlap(reach, inter))
+					{
+						if(inter.getFound() == false)
+						{
+							text = inter.fText;
+							pickup(text, player, background);
+							talk = true;
+						}
+					}
+				}
+
+		
 		// FlxG.overlap(hero, doors, openDoor);
 		// FlxG.overlap(hero, keys, pickupKey);
 		// FlxG.collide(hero, walls);
 		// FlxG.collide(hero, doors);
-
-
-		if(FlxG.keys.justPressed.X)
-			talk = gunPickup(text, player, talk, background);
 	}
 
 	// private function doneFadeOut()
@@ -130,15 +112,19 @@ class PlayState extends FlxState
 	// 		gun.isFound();
 	// }
 
-	public function gunPickup(text, player, talk, back)
+	public function pickup(text, player, back)
 		{
-			add(back);
-			
-			add(text);
-
+			back.revive();
+			text.revive();
 			player.canMove = false;
-			return talk = true;
 		}
+
+	public function disableText(text, player, back)
+	{
+		player.canMove = true;
+		text.kill();
+		background.kill();
+	}
 
 	// // Opens locked doors if you have a key
 	// private function openDoor(hero:Hero, door:Door)

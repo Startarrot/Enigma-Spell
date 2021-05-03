@@ -1,50 +1,34 @@
 package environment;
 
-import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxObject;
 import flixel.util.FlxColor;
 
 class Interactable extends FlxObject
 {
-    private var gun:FlxSprite;
-    private var invGun:FlxSprite;
-    public var gunfound:Bool = false;
+    private var obj:FlxSprite;
+    private var invObj:FlxSprite;
+    public var found:Bool = false;
+    public var fText:String;
 
     public static var SPRITE_WIDTH:Int = 32;
     public static var SPRITE_HEIGHT:Int = 32;
 
 
-    public function new()
+    public function new(X, Y, foundText)
         {
-            super();
-            gun.super(100,100);
-            gun.makeGraphic(10,10, FlxColor.ORANGE);
+            super(X, Y);
+            obj.makeGraphic(10,10, FlxColor.ORANGE);
+            fText = foundText;
         }
-
-    // override public function update(elapsed:Float):Void
-    //     {
-            
-    //     }
-
-    public function gunCheck()
-    {
-        if(gunfound == false)
-        {
-            gunfound = true;
-            gun.makeGraphic(10,10, FlxColor.CYAN);
-        }
-    }
 
     override public function update(elapsed:Float):Void
         {
-            if(FlxG.keys.justPressed.C)
-            {
-                //
-            }
-            if(FlxG.keys.justPressed.C)
-            {
-                //
-            }
+            
+        }
+
+    public function getFound()
+        {
+            return found;
         }
 }
