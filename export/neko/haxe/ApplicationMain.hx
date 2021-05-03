@@ -15,11 +15,11 @@ class ApplicationMain
 	#if !macro
 	public static function main()
 	{
-		lime.system.System.__registerEntryPoint("csc-303-game-2021", create);
+		lime.system.System.__registerEntryPoint("Enigma-Spell", create);
 
 		#if (js && html5)
 		#if (munit || utest)
-		lime.system.System.embed("csc-303-game-2021", null, 640, 480);
+		lime.system.System.embed("Enigma-Spell", null, 640, 480);
 		#end
 		#else
 		create(null);
@@ -32,10 +32,10 @@ class ApplicationMain
 
 		ManifestResources.init(config);
 
-		app.meta["build"] = "8";
+		app.meta["build"] = "18";
 		app.meta["company"] = "HaxeFlixel";
-		app.meta["file"] = "csc-303-game-2021";
-		app.meta["name"] = "csc-303-game-2021";
+		app.meta["file"] = "Enigma-Spell";
+		app.meta["name"] = "Enigma-Spell";
 		app.meta["packageName"] = "com.example.myapp";
 		app.meta["version"] = "0.0.1";
 
@@ -57,7 +57,7 @@ class ApplicationMain
 			minimized: false,
 			parameters: {},
 			resizable: true,
-			title: "csc-303-game-2021",
+			title: "Enigma-Spell",
 			width: 640,
 			x: null,
 			y: null,
