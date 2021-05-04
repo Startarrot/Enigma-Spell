@@ -39,8 +39,6 @@ class PlayState extends FlxState
 
 		talk = false;
 
-		
-
 		//add level
 		map = new FlxOgmo3Loader(AssetPaths.csc303_game_levels__ogmo, AssetPaths.level01__json);
 		walls = map.loadTilemap(AssetPaths.wallTile__png, "walls");
@@ -54,7 +52,7 @@ class PlayState extends FlxState
 
 		inter = new FlxTypedGroup<Interactable>();
 		inter.add(new Interactable(100,100,"This is a gun.  This is probably the murder weapon.  I should check the body"));
-		
+		add(inter);
 		// gun = new Gun(100, 100);
 		// add(gun);
 
@@ -72,6 +70,7 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+
 		if(talk)
 			{
 				if(FlxG.keys.justPressed.Z)
@@ -83,14 +82,9 @@ class PlayState extends FlxState
 
 			if(FlxG.keys.justPressed.Z && !talk)
 				{
-					if(FlxG.overlap(reach, inter))
+					if(FlxG.overlap(reach, inter, pickupText))
 					{
-						if(inter.getFound() == false)
-						{
-							text = inter.fText;
-							pickup(text, player, background);
-							talk = true;
-						}
+						
 					}
 				}
 
@@ -101,22 +95,22 @@ class PlayState extends FlxState
 		// FlxG.collide(hero, doors);
 	}
 
-	// private function doneFadeOut()
-	// {
-	// 	FlxG.switchState(new states.GameOverState());	
-	// }
-
-	// private function interact(gun:Gun)
-	// {
-	// 	if(gun.found == false)
-	// 		gun.isFound();
-	// }
-
 	public function pickup(text, player, back)
 		{
 			back.revive();
 			text.revive();
 			player.canMove = false;
+		}
+
+		public function pickupText(reach:Reach, inter:Interactable):Void
+		{
+			if(inter.found == false)
+				{
+					text.text = inter.fText;
+					pickup(text, player, background);
+					talk = true;
+					inter.found = true;
+				}
 		}
 
 	public function disableText(text, player, back)
