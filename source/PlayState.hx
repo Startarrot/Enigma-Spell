@@ -90,16 +90,18 @@ class PlayState extends FlxState
 			display.text = inv.display;
 		}
 
+		var finishedTalking = false;
 		if(talk)
 		{
 			if(FlxG.keys.justPressed.Z)
 			{
 				disableText(text, player, background);
 				talk = false;
+				finishedTalking = true;
 			}
 		}
 
-		if(FlxG.keys.justPressed.Z && !talk)
+		if(FlxG.keys.justPressed.Z && !talk && !finishedTalking)
 		{
 			FlxG.overlap(reach, inter, interText);
 		}
