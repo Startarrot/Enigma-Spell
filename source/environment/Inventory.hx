@@ -2,7 +2,6 @@ package environment;
 
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
-import flixel.text.FlxText;
 import flixel.FlxG;
 
 class Inventory extends FlxSprite

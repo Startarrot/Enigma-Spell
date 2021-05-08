@@ -9,6 +9,7 @@ import character.Reach;
 import character.Player;
 import environment.Interactable;
 import environment.Inventory;
+import environment.MessageTree;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxState;
 import flixel.FlxG;
@@ -29,6 +30,7 @@ class PlayState extends FlxState
 	var background:FlxSprite;
 	var inv:Inventory;
 	var display:FlxText;
+	var message:MessageTree;
 
 	private var talk:Bool;
 
@@ -73,6 +75,8 @@ class PlayState extends FlxState
 
 		inv = new Inventory();
 		add(inv);
+		message = new MessageTree();
+		add(message);
 		display = new FlxText(550, 0, 150, "", 20);
         add(display);
 	}
@@ -97,7 +101,7 @@ class PlayState extends FlxState
 
 		if(FlxG.keys.justPressed.Z && !talk)
 		{
-			FlxG.overlap(reach, inter, pickupText);
+			FlxG.overlap(reach, inter, interText);
 		}
 	}
 
@@ -108,16 +112,22 @@ class PlayState extends FlxState
 			player.canMove = false;
 		}
 
-	public function pickupText(reach:Reach, inter:Interactable):Void
+	public function interText(reach:Reach, inter:Interactable):Void
 	{
+		talk = true;
 		if(inter.found == false)
 		{
 			text.text = inter.fText;
 			pickup(text, player, background);
-			talk = true;
 			inter.found = true;
 			inv.foundItem(inter.num);
 		}
+		else
+		{
+			text.text = message.checkDialoge(inter.num,inv.selection);
+			pickup(text, player, background);
+		}
+		
 	}
 
 	public function disableText(text, player, back)
