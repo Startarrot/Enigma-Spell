@@ -1,7 +1,5 @@
 package;
 
-
-import environment.LevelExit;
 import flixel.util.FlxColor;
 import flixel.tile.FlxTilemap;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
@@ -33,8 +31,6 @@ class PlayState extends FlxState
 	var message:MessageTree;
 
 	private var talk:Bool;
-
-	private var levelExit:LevelExit;
 
 	override public function create():Void
 	{
