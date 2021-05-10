@@ -893,7 +893,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "22";
+	app.meta.h["build"] = "27";
 	app.meta.h["company"] = "HaxeFlixel";
 	app.meta.h["file"] = "Enigma-Spell";
 	app.meta.h["name"] = "Enigma-Spell";
@@ -5495,14 +5495,15 @@ PlayState.__super__ = flixel_FlxState;
 PlayState.prototype = $extend(flixel_FlxState.prototype,{
 	player: null
 	,reach: null
-	,gun: null
 	,map: null
 	,walls: null
 	,inter: null
 	,text: null
 	,background: null
+	,inv: null
+	,display: null
+	,message: null
 	,talk: null
-	,levelExit: null
 	,create: function() {
 		flixel_FlxState.prototype.create.call(this);
 		this.talk = false;
@@ -5515,7 +5516,11 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		this.player = new character_Player();
 		this.add(this.player);
 		this.inter = new flixel_group_FlxTypedGroup();
-		this.inter.add(new environment_Interactable(100,100,"This is a gun.  This is probably the murder weapon.  I should check the body"));
+		this.inter.add(new environment_Interactable(100,100,"This is a gun.  This is probably the murder weapon.  I should check the body.",0));
+		this.inter.add(new environment_Interactable(200,100,"Definitly a dead body. Shot in his high rise office.  Really feel sorry for him.",1));
+		this.inter.add(new environment_Interactable(300,100,"Door doesn't look busted in.  Whoever did this was let in.",2));
+		this.inter.add(new environment_Interactable(400,100,"An account book?  Some of it's pages have been torn out!",3));
+		this.inter.add(new environment_Interactable(500,100,"The report says he was shot in the back with a necrosis bullet. I hate rot magic.  My life is rotten enough without it.",4));
 		this.add(this.inter);
 		this.reach = new character_Reach(this.player);
 		this.add(this.reach);
@@ -5525,19 +5530,30 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		this.add(this.text);
 		this.background.kill();
 		this.text.kill();
+		this.inv = new environment_Inventory();
+		this.add(this.inv);
+		this.message = new environment_MessageTree();
+		this.add(this.message);
+		this.display = new flixel_text_FlxText(550,0,150,"",20);
+		this.add(this.display);
 	}
 	,update: function(elapsed) {
 		flixel_FlxState.prototype.update.call(this,elapsed);
+		if(this.inv.beenFound) {
+			this.display.set_text(this.inv.display);
+		}
+		var finishedTalking = false;
 		if(this.talk) {
 			var _this = flixel_FlxG.keys.justPressed;
 			if(_this.keyManager.checkStatus(90,_this.status)) {
 				this.disableText(this.text,this.player,this.background);
 				this.talk = false;
+				finishedTalking = true;
 			}
 		}
 		var _this = flixel_FlxG.keys.justPressed;
-		if(_this.keyManager.checkStatus(90,_this.status) && !this.talk) {
-			var tmp = flixel_FlxG.overlap(this.reach,this.inter,$bind(this,this.pickupText));
+		if(_this.keyManager.checkStatus(90,_this.status) && !this.talk && !finishedTalking) {
+			flixel_FlxG.overlap(this.reach,this.inter,$bind(this,this.interText));
 		}
 	}
 	,pickup: function(text,player,back) {
@@ -5545,12 +5561,16 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		text.revive();
 		player.canMove = false;
 	}
-	,pickupText: function(reach,inter) {
+	,interText: function(reach,inter) {
+		this.talk = true;
 		if(inter.found == false) {
 			this.text.set_text(inter.fText);
 			this.pickup(this.text,this.player,this.background);
-			this.talk = true;
 			inter.found = true;
+			this.inv.foundItem(inter.num);
+		} else {
+			this.text.set_text(this.message.checkDialoge(inter.num,this.inv.selection));
+			this.pickup(this.text,this.player,this.background);
 		}
 	}
 	,disableText: function(text,player,back) {
@@ -8975,29 +8995,12 @@ character_Reach.prototype = $extend(flixel_FlxSprite.prototype,{
 	}
 	,__class__: character_Reach
 });
-var environment_Gun = function(X,Y) {
-	flixel_FlxSprite.call(this,X,Y);
-	this.makeGraphic(10,10,-23296);
-	this.isFound = false;
-};
-$hxClasses["environment.Gun"] = environment_Gun;
-environment_Gun.__name__ = "environment.Gun";
-environment_Gun.__super__ = flixel_FlxSprite;
-environment_Gun.prototype = $extend(flixel_FlxSprite.prototype,{
-	isFound: null
-	,update: function(elapsed) {
-	}
-	,found: function() {
-		this.isFound = true;
-		this.makeGraphic(10,10,-16711681);
-	}
-	,__class__: environment_Gun
-});
-var environment_Interactable = function(X,Y,foundText) {
+var environment_Interactable = function(X,Y,foundText,number) {
 	this.found = false;
 	flixel_FlxSprite.call(this,X,Y);
 	this.makeGraphic(10,10,-23296);
 	this.fText = foundText;
+	this.num = number;
 };
 $hxClasses["environment.Interactable"] = environment_Interactable;
 environment_Interactable.__name__ = "environment.Interactable";
@@ -9005,25 +9008,93 @@ environment_Interactable.__super__ = flixel_FlxSprite;
 environment_Interactable.prototype = $extend(flixel_FlxSprite.prototype,{
 	found: null
 	,fText: null
+	,num: null
 	,update: function(elapsed) {
 	}
 	,__class__: environment_Interactable
 });
-var environment_LevelExit = function(X,Y) {
-	flixel_FlxSprite.call(this,X,Y);
-	this.set_immovable(true);
-	this.initializeGraphics();
+var environment_Inventory = function() {
+	this.found = [false,false,false,false,false];
+	this.items = ["Gun","Body","Door","Book","Report"];
+	this.beenFound = false;
+	flixel_FlxSprite.call(this,540,0);
+	this.makeGraphic(200,30,-16777216);
 };
-$hxClasses["environment.LevelExit"] = environment_LevelExit;
-environment_LevelExit.__name__ = "environment.LevelExit";
-environment_LevelExit.__super__ = flixel_FlxSprite;
-environment_LevelExit.prototype = $extend(flixel_FlxSprite.prototype,{
-	initializeGraphics: function() {
-	}
+$hxClasses["environment.Inventory"] = environment_Inventory;
+environment_Inventory.__name__ = "environment.Inventory";
+environment_Inventory.__super__ = flixel_FlxSprite;
+environment_Inventory.prototype = $extend(flixel_FlxSprite.prototype,{
+	beenFound: null
+	,selection: null
+	,items: null
+	,found: null
+	,display: null
 	,update: function(elapsed) {
-		flixel_FlxSprite.prototype.update.call(this,elapsed);
+		var _this = flixel_FlxG.keys.justPressed;
+		if(_this.keyManager.checkStatus(67,_this.status) && this.beenFound) {
+			this.cycleUp();
+		}
+		var _this = flixel_FlxG.keys.justPressed;
+		if(_this.keyManager.checkStatus(88,_this.status) && this.beenFound) {
+			this.cycleDown();
+		}
 	}
-	,__class__: environment_LevelExit
+	,cycleUp: function() {
+		if(this.beenFound == true) {
+			this.selection = (this.selection + 1) % 5;
+			while(this.found[this.selection] != true) this.selection = (this.selection + 1) % 5;
+		}
+		this.display = this.items[this.selection];
+	}
+	,cycleDown: function() {
+		if(this.beenFound == true) {
+			this.selection -= 1;
+			if(this.selection == -1) {
+				this.selection = 4;
+			}
+			while(this.found[this.selection] != true) {
+				this.selection -= 1;
+				if(this.selection == -1) {
+					this.selection = 4;
+				}
+			}
+		}
+		this.display = this.items[this.selection];
+	}
+	,foundItem: function(num) {
+		if(this.beenFound == false) {
+			this.beenFound = true;
+			this.selection = num;
+			this.display = this.items[this.selection];
+		}
+		this.found[num] = true;
+	}
+	,__class__: environment_Inventory
+});
+var environment_MessageTree = function() {
+	this.nothing = "I should get back to work.";
+	this.reportBody = "Definitly a necrosis bullet.  Never a pretty sight and a even worse smell.  Doesn't look like he put up a fight.  Must of been taken by suprise.";
+	this.found = [false,false,false,false,false];
+	flixel_FlxObject.call(this);
+};
+$hxClasses["environment.MessageTree"] = environment_MessageTree;
+environment_MessageTree.__name__ = "environment.MessageTree";
+environment_MessageTree.__super__ = flixel_FlxObject;
+environment_MessageTree.prototype = $extend(flixel_FlxObject.prototype,{
+	found: null
+	,display: null
+	,reportBody: null
+	,nothing: null
+	,update: function(elapsed) {
+	}
+	,checkDialoge: function(num,selection) {
+		if(num == 2 && selection == 4) {
+			return this.reportBody;
+		} else {
+			return this.nothing;
+		}
+	}
+	,__class__: environment_MessageTree
 });
 var flixel_IFlxBasic = function() { };
 $hxClasses["flixel.IFlxBasic"] = flixel_IFlxBasic;
@@ -70409,7 +70480,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 715060;
+	this.version = 777704;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
@@ -113036,10 +113107,6 @@ character_Player.INPUT_DOWN = 40;
 character_Player.ACTION_1 = 90;
 character_Player.ACTION_2 = 88;
 character_Player.STARTING_MAX_HEALTH = 6;
-environment_Gun.SPRITE_WIDTH = 32;
-environment_Gun.SPRITE_HEIGHT = 32;
-environment_LevelExit.WIDTH = 40;
-environment_LevelExit.HEIGHT = 40;
 flixel_math_FlxPoint._pool = new flixel_util_FlxPool_$flixel_$math_$FlxPoint(flixel_math_FlxPoint);
 lime_math_Matrix3.__identity = new lime_math_Matrix3();
 openfl_geom_Matrix.__meta__ = { fields : { equals : { SuppressWarnings : ["checkstyle:FieldDocComment"]}, to3DString : { SuppressWarnings : ["checkstyle:FieldDocComment"]}, toMozString : { SuppressWarnings : ["checkstyle:FieldDocComment"]}}};
